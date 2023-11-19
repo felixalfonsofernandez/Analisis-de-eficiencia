@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bienvenida</title>
+    <!-- Incluyendo Bootstrap CSS desde CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Incluyendo la fuente Poppins desde Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Incluyendo estilos opcionales -->
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif; /* Aplicar la fuente Poppins */
+        }
+        body {
+            background-image: url('{{ url_for('static', filename='imagenes/eficiencia_trabajadores.png') }}');
+            background-size: cover;
+            background-position: center center; /* Centrar completamente la imagen */
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .overlay {
+            background: rgba(0, 0, 0, 0.5); 
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .content-box {
+            background-color: rgba(255, 255, 255, 0.85); /* Color semitransparente para diferenciar */
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px;
+            text-align: center;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 30px;
+            font-size: 20px;
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+        h1 {
+            color: black;
+            font-weight: 600; /* Poppins semibold */
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <div class="content-box">
+            <h1 class="display-4 text-center mb-4">Análisis de la eficiencia de los trabajadores</h1>
+            <div>
+                <a href="/inicio" class="btn-custom">Ir al Inicio</a>
+            </div>
+        </div>
+    </div>
+    <!-- Incluyendo Bootstrap JS y dependencias desde CDN (Opcional para algunos componentes de Bootstrap) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

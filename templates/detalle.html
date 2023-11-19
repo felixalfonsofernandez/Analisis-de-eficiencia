@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de la Tarea</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: #f7f7f7; /* Color de fondo suave */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .task-details {
+            background: #ffffff; /* Fondo blanco para el contenido */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra suave para la tarjeta */
+            width: 80%; /* Ancho de la tarjeta de detalles */
+            max-width: 600px; /* Ancho máximo de la tarjeta */
+        }
+        .task-details h2 {
+            color: #333333; /* Color oscuro para el título */
+            margin-bottom: 20px;
+        }
+        .task-details p {
+            color: #555555; /* Color gris oscuro para el texto */
+            line-height: 1.6; /* Espaciado de línea para legibilidad */
+        }
+        .back-button {
+            display: inline-block; /* Para aplicar margin y padding */
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #3498db; /* Color azul para el botón */
+            color: #ffffff; /* Color de texto blanco */
+            border-radius: 5px; /* Bordes redondeados */
+            text-decoration: none; /* Remover subrayado de enlace */
+            font-weight: bold; /* Texto en negrita */
+            transition: background-color 0.3s ease; /* Transición suave del color de fondo */
+        }
+        .back-button:hover {
+            background-color: #2980b9; /* Color azul más oscuro al pasar el ratón */
+        }
+        .back-button img {
+            width: 20px; /* Tamaño del icono de la imagen */
+            vertical-align: middle; /* Alineación vertical con el texto */
+            margin-right: 8px; /* Espaciado entre el icono y el texto */
+        }
+    </style>
+</head>
+<body>
+
+<div class="task-details">
+    <h2>Detalle de la Tarea</h2>
+    <p><strong>Creador:</strong> {{ tarea.Creador }}</p>
+    <p><strong>Contenido:</strong> {{ tarea.Contenido }}</p>
+    <p><strong>Estado:</strong> {{ 'Realizada' if tarea.Realizado else 'En Progreso' if tarea.EnProgreso else 'No Realizada' }}</p>
+    <p><strong>Fecha de Creación:</strong> {{ tarea.creacion.strftime('%d/%m/%Y, %H:%M:%S') }}</p>
+    <p><strong>Fecha de Término:</strong> {{ tarea.fecha_termino.strftime('%d/%m/%Y, %H:%M:%S') if tarea.fecha_termino else 'No especificado' }}</p>
+    <p><strong>Usuario Designado:</strong> {{ tarea.usuario_designado.Nombres if tarea.usuario_designado else 'No asignado' }}</p>
+    <p><strong>Dificultad:</strong> {{ tarea.Dificultad }}</p>
+</div>
+
+</body>
+</html>

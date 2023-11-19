@@ -1,0 +1,381 @@
+<!-- creacion_tareas.html -->
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Creación de Tareas</title>
+  <!-- CSS de Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+  <!-- JS y Popper.js de Bootstrap (opcional, pero necesario para los modales) -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* Estilos básicos */
+    /* Estilos básicos y fuentes */
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        display: flex;
+        flex-direction: column; /* Estructura de flexbox en columna */
+    }
+
+    /* Header estilos */
+    .header {
+        background-color: #2C3E50; /* Carbón oscuro para el header */
+        color: #ECF0F1; /* Un tono claro de gris para el texto */
+        padding: 2px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .header .user-info {
+        text-align: right;
+    }
+
+    /* Contenido principal y sidebar estilos */
+    .main-content {
+        display: flex;
+        flex-grow: 1;
+        height: calc(100vh - 50px); /* Altura menos el header */
+    }
+
+    /* Sidebar estilos */
+    .sidebar {
+        background-color: #7F8C8D; /* Gris azulado para el sidebar */
+        color: #ECF0F1; /* Texto claro para contrastar con el sidebar */
+        padding: 20px;
+        width: 250px; /* Tamaño fijo para sidebar */
+        display: flex;
+        flex-direction: column; /* Estructura de flexbox en columna */
+        justify-content: space-between; /* Espacio entre el menú y los botones */
+    }
+    .sidebar h2 {
+        text-align: center;
+        color: #fff;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #444;
+        margin-bottom: 20px;
+    }
+    .sidebar a, .sidebar button {
+        color: #ECF0F1;
+        text-decoration: none;
+        padding: 10px 20px;
+        display: block;
+        margin: 10px 0;
+        border-radius: 5px;
+        background-color: #444; /* Color de fondo para que coincida con el sidebar */
+        border: none;
+        text-align: center; /* Centrado del texto */
+    }
+    .sidebar a:hover, .sidebar a.active, .sidebar button:hover {
+        background-color: #3498DB; /* Azul eléctrico para fondo */
+        color: #2C3E50; /* Carbón oscuro para el texto */
+    }
+
+    .sidebar .logout-section {
+        align-self: center; /* Centrado del botón de logout */
+    }
+
+    /* Estilos para el contenedor de tareas */
+    .container {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+    }
+    .task-section {
+        display: none; /* Ocultar todas las secciones inicialmente */
+        margin: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .task-section h2 {
+        text-align: center;
+        color: #333;
+    }
+    .task-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+    }
+
+    .sidebar-bottom {
+text-align: center; /* Centra el contenido en el sidebar */
+margin-top: auto; /* Empuja el contenido hacia la parte inferior */
+}
+
+.sidebar button {
+/* Estilos existentes */
+width: 80%; /* Ancho del botón para que no sea de borde a borde */
+margin: 10px auto; /* Centro el botón horizontalmente y añade un margen superior e inferior */
+}
+
+.task-details {
+padding: 10px;
+margin-top: 10px;
+background-color: #f3f3f3;
+border-left: 5px solid #3498db;
+display: none; /* Oculto por defecto */
+}
+
+/* Hacer el diseño responsive */
+@media (max-width: 768px) {
+.header, .sidebar, .container {
+    width: 100%; /* Ocupar todo el ancho en dispositivos pequeños */
+}
+.main-content {
+    flex-direction: column; /* Cambia la dirección de flex a columna para dispositivos pequeños */
+}
+.sidebar {
+    height: auto; /* Altura automática para el sidebar */
+    padding: 10px; /* Reducir el padding en dispositivos pequeños */
+}
+.sidebar-bottom {
+    flex-direction: column; /* Alinear los botones verticalmente en dispositivos pequeños */
+}
+.container {
+    padding: 10px; /* Reducir el padding en dispositivos pequeños */
+}
+.task-section {
+    width: auto; /* Hacer que las secciones de tareas ocupen todo el ancho disponible */
+    margin: 10px; /* Reducir el margen para dispositivos pequeños */
+}
+}
+
+.form-creacion {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-creacion .form-group {
+    margin-bottom: 15px;
+}
+
+.form-creacion .form-control {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.form-creacion .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+</style>
+</head>
+<body>
+
+
+  <div class="header">
+    <h1>Tareas</h1>
+    <div class="user-info">
+      <span>{{ session['jefe'] }}</span> | 
+      <span>Usuario Jefe</span>
+    </div>
+  </div>
+
+
+  <div class="main-content">
+    <div class="sidebar">
+        <h2>Menú</h2>
+        <a href="#" class="active" onclick="showSection('no-realizadas')">Creación de tareas</a>
+        <a href="#" onclick="showSection('en-progreso')">Prediccion</a>
+        <div class="sidebar-bottom">
+            <button type="button" onclick="location.href='/perfil'">Ver perfil</button>
+            <form method="POST" action="/logout">
+                <button type="submit">Desloguearse</button>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+      <div id="no-realizadas" class="task-section">
+        
+        <h1>Crear Nueva Tarea</h1>
+        <!-- Botón para activar el modal -->
+        <form action="/creacion" method="post" class="form-creacion">
+          <div class="form-group">
+              <label for="creador">Creador:</label>
+              <input type="text" id="creador" name="creador" required class="form-control">
+          </div>
+          
+          <div class="form-group">
+              <label for="contenido">Contenido:</label>
+              <textarea id="contenido" name="contenido" rows="4" required class="form-control"></textarea>
+          </div>
+          
+          <div class="form-group">
+              <label for="fecha_creacion">Fecha de Creación:</label>
+              <input type="date" id="fecha_creacion" name="fecha_creacion" required class="form-control">
+          </div>
+          
+          <div class="form-group">
+              <label for="usuario_designado">Usuario Designado:</label>
+              <select id="usuario_designado" name="usuario_designado" required class="form-control">
+                  {% for usuario in usuarios %}
+                    <option value="{{ usuario.Id }}">{{ usuario.Nombres }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          
+          <div class="form-group">
+              <label for="dificultad">Dificultad:</label>
+              <input type="text" id="dificultad" name="dificultad" required class="form-control">
+          </div>
+          
+          <div class="form-group">
+              <label for="cantidad">Cantidad:</label>
+              <input type="number" id="cantidad" name="cantidad" required class="form-control">
+          </div>
+          
+          <button type="submit" class="btn btn-primary">Crear Tarea</button>
+      </form>
+      </div>
+
+      <div id="en-progreso" class="task-section">
+
+        <h1>Predicciones de Productividad para Tareas Pendientes</h1>
+
+        <!-- Formulario para enviar la solicitud POST -->
+        <form action="/prediccion" method="post">
+            <button type="submit">Obtener Predicciones</button>
+        </form>
+
+        <!-- Tabla para mostrar las predicciones -->
+        <table class="table table-striped table-hover">
+          <thead class="thead-dark">
+              <tr>
+                  <th>ID de Tarea</th>
+                  <th>Contenido</th>
+                  <th>Predicción</th>
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Las filas se insertarán aquí por JavaScript -->
+          </tbody>
+        </table>
+
+        <!-- Área de los gráficos -->
+        <div class="row">
+          <div class="col-md-6">
+            <canvas id="prediccionChart"></canvas>
+          </div>
+          <div class="col-md-6">
+            <canvas id="newChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+
+
+
+
+<script>
+ document.addEventListener('DOMContentLoaded', function() {
+  initData('{{ resultados_json | tojson | safe }}');
+  showSection('no-realizadas');
+});
+
+function initData(jsonData) {
+  resultados = JSON.parse(jsonData);
+  displayResults(); // Esta función llenará la tabla con los resultados iniciales.
+}
+
+var resultados = [];
+
+function showSection(sectionId) {
+  document.querySelectorAll('.task-section').forEach(function(section) {
+    section.style.display = 'none';
+  });
+  var section = document.getElementById(sectionId);
+  section.style.display = 'block';
+  document.querySelectorAll('.sidebar a').forEach(function(link) {
+    link.classList.remove('active');
+  });
+  document.querySelector('.sidebar a[onclick="showSection(\'' + sectionId + '\')"]').classList.add('active');
+  if (sectionId === 'en-progreso') {
+    generateCharts();
+  }
+}
+
+function generateCharts() {
+  var ctx = document.getElementById('prediccionChart').getContext('2d');
+  var labels = resultados.map(function(resultado) { return resultado.Contenido; });
+  var data = resultados.map(function(resultado) { return resultado.Prediccion; });
+  var chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Predicción',
+        data: data,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 1
+        }
+      }
+    }
+  });
+
+  var ctx2 = document.getElementById('newChart').getContext('2d');
+  var chart2 = new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Predicción',
+        data: data,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 1
+        }
+      }
+    }
+  });
+}
+
+function displayResults() {
+  var tbody = document.querySelector('.table tbody');
+  tbody.innerHTML = '';
+  resultados.forEach(function(resultado) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + resultado.Tarea_Id + '</td><td>' + resultado.Contenido + '</td><td>' + resultado.Prediccion + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos básicos */
+        /* Estilos básicos y fuentes */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column; /* Estructura de flexbox en columna */
+        }
+
+        /* Header estilos */
+        .header {
+            background-color: #2C3E50; /* Carbón oscuro para el header */
+            color: #ECF0F1; /* Un tono claro de gris para el texto */
+            padding: 2px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header .user-info {
+            text-align: right;
+        }
+
+        /* Contenido principal y sidebar estilos */
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            height: calc(100vh - 50px); /* Altura menos el header */
+        }
+
+        /* Sidebar estilos */
+        .sidebar {
+            background-color: #7F8C8D; /* Gris azulado para el sidebar */
+            color: #ECF0F1; /* Texto claro para contrastar con el sidebar */
+            padding: 20px;
+            width: 250px; /* Tamaño fijo para sidebar */
+            display: flex;
+            flex-direction: column; /* Estructura de flexbox en columna */
+            justify-content: space-between; /* Espacio entre el menú y los botones */
+        }
+        .sidebar h2 {
+            text-align: center;
+            color: #fff;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+            margin-bottom: 20px;
+        }
+        .sidebar a, .sidebar button {
+            color: #ECF0F1;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #444; /* Color de fondo para que coincida con el sidebar */
+            border: none;
+            text-align: center; /* Centrado del texto */
+        }
+        .sidebar a:hover, .sidebar a.active, .sidebar button:hover {
+            background-color: #3498DB; /* Azul eléctrico para fondo */
+            color: #2C3E50; /* Carbón oscuro para el texto */
+        }
+
+        .sidebar .logout-section {
+            align-self: center; /* Centrado del botón de logout */
+        }
+
+        /* Estilos para el contenedor de tareas */
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .task-section {
+            display: none; /* Ocultar todas las secciones inicialmente */
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .task-section h2 {
+            text-align: center;
+            color: #333;
+        }
+        .task-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .sidebar-bottom {
+    text-align: center; /* Centra el contenido en el sidebar */
+    margin-top: auto; /* Empuja el contenido hacia la parte inferior */
+}
+
+.sidebar button {
+    /* Estilos existentes */
+    width: 80%; /* Ancho del botón para que no sea de borde a borde */
+    margin: 10px auto; /* Centro el botón horizontalmente y añade un margen superior e inferior */
+}
+
+.task-details {
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f3f3f3;
+    border-left: 5px solid #3498db;
+    display: none; /* Oculto por defecto */
+}
+
+/* Hacer el diseño responsive */
+@media (max-width: 768px) {
+    .header, .sidebar, .container {
+        width: 100%; /* Ocupar todo el ancho en dispositivos pequeños */
+    }
+    .main-content {
+        flex-direction: column; /* Cambia la dirección de flex a columna para dispositivos pequeños */
+    }
+    .sidebar {
+        height: auto; /* Altura automática para el sidebar */
+        padding: 10px; /* Reducir el padding en dispositivos pequeños */
+    }
+    .sidebar-bottom {
+        flex-direction: column; /* Alinear los botones verticalmente en dispositivos pequeños */
+    }
+    .container {
+        padding: 10px; /* Reducir el padding en dispositivos pequeños */
+    }
+    .task-section {
+        width: auto; /* Hacer que las secciones de tareas ocupen todo el ancho disponible */
+        margin: 10px; /* Reducir el margen para dispositivos pequeños */
+    }
+}
+
+    </style>
+</head>
+<body>
+
+
+    <div class="header">
+        <h1>Tareas</h1>
+        <div class="user-info">
+            <span>{{ session['usuario'] }}</span> | 
+            <span>Usuario Empleado</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="sidebar">
+            <h2>Menú</h2>
+            <a href="#" class="active" onclick="showSection('no-realizadas')">Tareas no realizadas</a>
+            <a href="#" onclick="showSection('en-progreso')">Tareas en progreso</a>
+            <a href="#" onclick="showSection('realizadas')">Tareas realizadas</a>
+            <div class="sidebar-bottom">
+                <button type="button" onclick="location.href='/perfil'">Ver perfil</button>
+                <form method="POST" action="/logout">
+                    <button type="submit">Desloguearse</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Tareas no realizadas -->
+            <div id="no-realizadas" class="task-section">
+                <h2>Tareas no realizadas</h2>
+                <!-- Bucle a través de tareas no realizadas -->
+                {% for tarea in tareas_no_realizadas %}
+                <div class="task-card">
+                    <a href="javascript:void(0);" onclick="toggleTaskDetails({{ tarea.Id }})" style="text-decoration: none; color: inherit;">
+                    <h3>Creador: {{ tarea.Creador }}</h3>
+                    <p>{{ tarea.Contenido }}</p>
+                    <!-- Puedes agregar más detalles aquí si lo deseas -->
+                    </a>
+                    <div id="details-{{ tarea.Id }}" class="task-details" style="display: none;">
+                        <!-- Aquí se cargarán los detalles de la tarea -->
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Tareas en progreso -->
+            <div id="en-progreso" class="task-section">
+                <h2>Tareas en progreso</h2>
+                <!-- Bucle a través de tareas en progreso -->
+                {% for tarea in tareas_en_progreso %}
+                <div class="task-card">
+                    <a href="javascript:void(0);" onclick="toggleTaskDetails({{ tarea.Id }})" style="text-decoration: none; color: inherit;">
+                    <h3>Creador: {{ tarea.Creador }}</h3>
+                    <p>{{ tarea.Contenido }}</p>
+                    <!-- Puedes agregar más detalles aquí si lo deseas -->
+                    </a>
+                    <div id="details-{{ tarea.Id }}" class="task-details" style="display: none;">
+                        <!-- Aquí se cargarán los detalles de la tarea -->
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Tareas realizadas -->
+            <div id="realizadas" class="task-section">
+                <h2>Tareas realizadas</h2>
+                <!-- Bucle a través de tareas realizadas -->
+                {% for tarea in tareas_realizadas %}
+                <div class="task-card">
+                    <a href="javascript:void(0);" onclick="toggleTaskDetails({{ tarea.Id }})" style="text-decoration: none; color: inherit;">
+                    <h3>Creador: {{ tarea.Creador }}</h3>
+                    <p>{{ tarea.Contenido }}</p>
+                    <!-- Puedes agregar más detalles aquí si lo deseas -->
+                    </a>
+                    <div id="details-{{ tarea.Id }}" class="task-details" style="display: none;">
+                        <!-- Aquí se cargarán los detalles de la tarea -->
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar las secciones de tareas
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.task-section').forEach(function(section) {
+                section.style.display = 'none';
+            });
+            // Mostrar la sección seleccionada
+            document.getElementById(sectionId).style.display = 'block';
+
+            // Actualizar la clase activa del sidebar
+            document.querySelectorAll('.sidebar a').forEach(function(link) {
+                link.classList.remove('active');
+            });
+            document.querySelector('.sidebar a[onclick="showSection(\'' + sectionId + '\')"]').classList.add('active');
+        }
+        // Mostrar la primera sección por defecto
+        showSection('no-realizadas');
+
+        function toggleTaskDetails(tareaId) {
+            var detailsContainer = document.getElementById('details-' + tareaId);
+            if (detailsContainer.style.display === 'none') {
+                // Hacer una solicitud AJAX para obtener los detalles de la tarea
+                fetch('/tarea/' + tareaId + '/detalles').then(response => response.json()).then(data => {
+                    if (data.error) {
+                        detailsContainer.innerHTML = '<p>Error al cargar los detalles.</p>';
+                    } else {
+                        detailsContainer.innerHTML = '<p><strong>Creador:</strong> ' + data.Creador + '</p>' +
+                                                    '<p><strong>Contenido:</strong> ' + data.Contenido + '</p>'+
+                                                    '<p><strong>Estado:</strong> ' + data.Estado + '</p>'+
+                                                    '<p><strong>Fecha de creación:</strong> ' + data.Fecha_de_creación + '</p>'+
+                                                    '<p><strong>Fecha de termino:</strong> ' + data.Fecha_de_termino + '</p>'+
+                                                    '<p><strong>Usuario designado:</strong> ' + data.Usuario_Designado + '</p>'+
+                                                    '<p><strong>Dificultad:</strong> ' + data.Dificultad + '</p>';
+                        // Añade aquí más campos de la respuesta JSON
+                    }
+                    detailsContainer.style.display = 'block';
+                });
+            } else {
+                detailsContainer.style.display = 'none'; // Ocultar si ya está visible
+            }
+        }
+
+    </script>
+
+
+</body>
+</html>
